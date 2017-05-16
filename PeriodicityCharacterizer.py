@@ -34,8 +34,8 @@ def cyclic_equiv(u, v):
             j += k
     return False
 
-idProbe=""
-idMeas=""
+idProbe="23208"
+idMeas="2957509"
 
 conn = pymysql.connect(host="localhost",    # your host, usually localhost
                        user="root",         # your username
@@ -45,8 +45,8 @@ conn.autocommit(True)
 
 cur = conn.cursor()
 
-cur.execute("select distinct id_probeAnchor from idProbeAnchorToPaths where idProbe="+idProbe+" and idMeas="+idMeas+";")
-#cur.execute("select * from tracerouteWithDifferentParisMEM where id_probeAnchor='23208-200.7.6.40'")#solo per test
+#cur.execute("select distinct id_probeAnchor from idProbeAnchorToPaths where id_Probe="+idProbe+" and idMeas="+idMeas+";")
+cur.execute("select * from tracerouteWithDifferentParisMEM where id_probeAnchor='23208-200.7.6.40'")#solo per test
 
 queryOutput= cur.fetchall()
 tracerouteToTimestamps=list()
@@ -370,13 +370,21 @@ for id_proAncora in tracerouteToTimestamps:
     if periodicitaTrovata is True:
         periodicita+=1
 
-print(periodicita)
-print(globalPeriodicityLengthToCount)
-print(globalPatternLegthToCount)
-print(globalOscillationToCount)
-print(globalDistinctCharacterToCount)
+#print(periodicita)
+#print(globalPeriodicityLengthToCount)
+#print(globalPatternLegthToCount)
+#print(globalOscillationToCount)
+#print(globalDistinctCharacterToCount)
+
+#Elenco di corrispondenze caratteriIdentificatori
 print(idTochar)
+
+#Elenco delle periodicita individuate
 print(periodicitaIndividuate)
+
+
+
+
 
 # charToId=dict()
 # for id in idTochar:

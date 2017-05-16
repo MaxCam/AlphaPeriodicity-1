@@ -1,4 +1,3 @@
-# url="https://atlas.ripe.net/api/v2/measurements/2055768/results?start=1493596800&stop=1494201599&probe_ids=23099&format=json"
 import urllib.request, json
 import pymysql
 
@@ -6,6 +5,10 @@ idProbeAnchorToIdsM=dict()
 traceroute=""
 conta=0
 
+
+# url="https://atlas.ripe.net/api/v2/measurements/2055768/results?start=1493596800&stop=1494201599&probe_ids=23099&format=json"
+defaultStart=1493596800
+defaultEnd=1494201599
 with urllib.request.urlopen("http://localhost:8000/test.json") as url:
     data = json.loads(url.read().decode())
     if True:  # TODO parisIDen
@@ -148,4 +151,3 @@ for key in idProbeAnchorToIdsM.keys():
 cur.close()
 conn.close()
 
-# CREATE TABLE  idProbeAnchorToPaths (     id_probeAnchor char(30) NOT NULL, id MEDIUMINT NOT NULL, probeId CHAR(40), idMeas CHAR(40),    reachingTarget CHAR(30) NOT NULL,     destinationAddress CHAR(40) NOT NULL,     protocol CHAR(5) NOT NULL,     listTimestamp MEDIUMTEXT NOT NULL, traceroute MEDIUMTEXT NOT NULL, paris0 MEDIUMINT, paris1 MEDIUMINT, paris2 MEDIUMINT, paris3 MEDIUMINT, paris4 MEDIUMINT, paris5 MEDIUMINT, paris6 MEDIUMINT, paris7 MEDIUMINT, paris8 MEDIUMINT, paris9 MEDIUMINT, paris10 MEDIUMINT, paris11 MEDIUMINT, paris12 MEDIUMINT, paris13 MEDIUMINT, paris14 MEDIUMINT, paris15 MEDIUMINT, isPeriodicByParis CHAR(40),  isPeriodicByNotParis CHAR(40), PRIMARY KEY (id_probeAnchor,id) ) ENGINE=MyISAM;
