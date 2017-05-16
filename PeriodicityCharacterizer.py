@@ -45,8 +45,8 @@ conn.autocommit(True)
 
 cur = conn.cursor()
 
-#cur.execute("select distinct id_probeAnchor from idProbeAnchorToPaths where id_Probe="+idProbe+" and idMeas="+idMeas+";")
-cur.execute("select * from tracerouteWithDifferentParisMEM where id_probeAnchor='23208-200.7.6.40'")#solo per test
+cur.execute("select * from idProbeAnchorToPaths where probeId="+idProbe+" and idMeas="+idMeas+";")
+#cur.execute("select * from tracerouteWithDifferentParisMEM where id_probeAnchor='23208-200.7.6.40'")#solo per test
 
 queryOutput= cur.fetchall()
 tracerouteToTimestamps=list()
@@ -62,10 +62,13 @@ globalPatternLegthToCount=dict()
 globalOscillationToCount=dict()
 globalPeriodicityLengthToCount=dict()
 
+idToCharacter=dict()
+asciiCount=97 #lettere minuscole
+
 for id_proAncora in tracerouteToTimestamps:
     patternToPeriodi=dict()
     periodicitaIndividuate=set()
-    cur.execute("select * from tracerouteWithDifferentParisMEM where id_probeAnchor='"+str(id_proAncora)+"'")
+    cur.execute("select * from idProbeAnchorToPaths where id_probeAnchor='"+str(id_proAncora)+"'")
 
     queryOutput= cur.fetchall()
 
@@ -142,7 +145,7 @@ for id_proAncora in tracerouteToTimestamps:
     '''acf'''
     i=0
     tracerouteIdsList=[]
-    asciiCount=97 #lettere minuscole
+
 
     #salvo tutti gli id  in una lista
     with open('listaTraceroute.tsv') as f:
@@ -152,11 +155,11 @@ for id_proAncora in tracerouteToTimestamps:
               tracerouteIdsList.append(line.strip())
           i+=1
 
-    idToCharacter=dict()
+
 
     #associo ad ogni id un carattere
     for id in tracerouteIdsList:
-        if id not in idToCharacter:
+        if id not in idToCharacter.keys():
             idToCharacter[id]=chr(asciiCount)
             if(asciiCount==122):
                 asciiCount=64 #maiuscole
@@ -266,6 +269,8 @@ for id_proAncora in tracerouteToTimestamps:
 
         currentPeriodicitaTrovate=list()
 
+        asciiCount = 97
+
         for m in diz:
             idsPresent=set()
             tuttoUguale=True
@@ -278,7 +283,6 @@ for id_proAncora in tracerouteToTimestamps:
                         break
                 if tuttoUguale is False:
                   stringa=""
-                  asciiCount = 97
                   for patternCharacter in m:
                       if(patternCharacter[:-1] not in idTochar.keys()):
                          # print("no")
@@ -370,21 +374,16 @@ for id_proAncora in tracerouteToTimestamps:
     if periodicitaTrovata is True:
         periodicita+=1
 
+
+
+
 #print(periodicita)
 #print(globalPeriodicityLengthToCount)
 #print(globalPatternLegthToCount)
 #print(globalOscillationToCount)
 #print(globalDistinctCharacterToCount)
-
-#Elenco di corrispondenze caratteriIdentificatori
-print(idTochar)
-
-#Elenco delle periodicita individuate
-print(periodicitaIndividuate)
-
-
-
-
+#print(idTochar)
+#print(periodicitaIndividuate)
 
 # charToId=dict()
 # for id in idTochar:
@@ -397,3 +396,11 @@ print(periodicitaIndividuate)
 #     print("**********")
 #     print(stringa[:-1])
 #     print(periodicita)
+
+
+
+#Elenco di corrispondenze caratteriIdentificatori
+print(idTochar)
+
+#Elenco delle periodicita individuate
+print(periodicitaIndividuate)

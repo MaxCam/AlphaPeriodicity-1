@@ -5,9 +5,9 @@ import operator
 import pymysql
 import json
 
-probe="INPUTE"
-measurement="toConvertinANCHOR"
-id_ProbeAnchor="23099-185.41.104.166"
+
+defaultProbeId="23208"
+defaultMeasurement="2957509"
 
 
 conn = pymysql.connect(host="localhost",
@@ -17,12 +17,10 @@ conn = pymysql.connect(host="localhost",
 conn.autocommit(True)
 cur = conn.cursor()
 
-
-idProbe=""
-idMeas=""
-
 #########################GDB DIAGRAM BUILDER#################################
-cur.execute("select * from idProbeAnchorToPaths where idProbe="+idProbe+" and idMeas="+idMeas+";")
+cur.execute("select * from idProbeAnchorToPaths where id_probeAnchor='23208-200.7.6.40'")
+
+#cur.execute("select * from idProbeAnchorToPaths where probeId="+defaultProbeId+" and idMeas="+defaultMeasurement+";")
 queryOutput= cur.fetchall()
 
 tracerouteToTimestamps=dict()

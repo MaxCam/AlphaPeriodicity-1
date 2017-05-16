@@ -5,11 +5,18 @@ idProbeAnchorToIdsM=dict()
 traceroute=""
 conta=0
 
+defaultStart="1493596800"
+defaultEnd="1494201599"
+defaultProbeId="23208"
+defaultMeasurement="2957509"
 
-# url="https://atlas.ripe.net/api/v2/measurements/2055768/results?start=1493596800&stop=1494201599&probe_ids=23099&format=json"
-defaultStart=1493596800
-defaultEnd=1494201599
-with urllib.request.urlopen("http://localhost:8000/test.json") as url:
+url="https://atlas.ripe.net/api/v2/measurements/"+defaultMeasurement+"/results?start="+defaultStart+"&stop="+defaultEnd+"&probe_ids="+defaultProbeId+"&format=json"
+
+#url="https://atlas.ripe.net/api/v2/measurements/2055768/results?start=1493596800&stop=1494201599&probe_ids=23099&format=json"
+
+
+
+with urllib.request.urlopen(url) as url:
     data = json.loads(url.read().decode())
     if True:  # TODO parisIDen
         conta = conta + 1
@@ -138,16 +145,15 @@ for key in idProbeAnchorToIdsM.keys():
         p14 = idProbeAnchorToIdsM[key][rec]["paris_ids"][14]
         p15 = idProbeAnchorToIdsM[key][rec]["paris_ids"][15]
 
-        try:
-            cur.execute("INSERT INTO idProbeAnchorToPaths (id_probeAnchor,id,probeId,idMeas,reachingTarget,destinationAddress,protocol,listTimestamp,traceroute,paris0 , paris1 , paris2 , paris3 , paris4 , paris5 , paris6 , paris7 , paris8 , paris9 , paris10 , paris11 , paris12 , paris13 , paris14 , paris15 ) VALUES ('" + key + "','" + str(
-                    rec) + "','" + str(probeId).strip() + "','" + str(idMeas) + "','" + str(reachingTarget) + "','" + str(
+        if True:#TODO gestire
+            cur.execute("INSERT INTO idProbeAnchorToPaths (id_probeAnchor,id,idMeas,reachingTarget,destinationAddress,protocol,listTimestamp,traceroute,paris0 , paris1 , paris2 , paris3 , paris4 , paris5 , paris6 , paris7 , paris8 , paris9 , paris10 , paris11 , paris12 , paris13 , paris14 , paris15, probeId ) VALUES ('" + key + "','" + str(
+                    rec) + "','"  + str(idMeas) + "','" + str(reachingTarget) + "','" + str(
                     destinationAddress) + "','" + str(ipNumberProtocol) + "','" + str(timeStampOfNew) + "','" + str(
                     traceroute) + "','" + str(p0) + "','" + str(p1) + "','" + str(p2) + "','" + str(p3) + "','" + str(
                     p4) + "','" + str(p5) + "','" + str(p6) + "','" + str(p7) + "','" + str(p8) + "','" + str(
                     p9) + "','" + str(p10) + "','" + str(p11) + "','" + str(p12) + "','" + str(p13) + "','" + str(
-                    p14) + "','" + str(p15) + "');")
-        except:
-            pass
+                    p14) + "','" + str(p15) + "','"+ str(probeId).strip() + "');")
+
 cur.close()
 conn.close()
 
