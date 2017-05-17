@@ -1,4 +1,4 @@
-import urllib.request, json
+import urllib3.request, json
 import pymysql
 
 def run(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
@@ -7,7 +7,7 @@ def run(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
     conta=0
     url="https://atlas.ripe.net/api/v2/measurements/"+defaultMeasurement+"/results?start="+defaultStart+"&stop="+defaultEnd+"&probe_ids="+defaultProbeId+"&format=json"
 
-    with urllib.request.urlopen(url) as url:
+    with urllib3.request.urlopen(url) as url:
         data = json.loads(url.read().decode())
         if True:  # TODO parisIDen
             conta = conta + 1
