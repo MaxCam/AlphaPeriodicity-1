@@ -3,6 +3,7 @@ import operator
 import pymysql
 import textwrap
 import re
+import sys
 
 def store(data):
     #persist data on mysql - table periodicity
@@ -39,13 +40,13 @@ def cyclic_equiv(u, v):
             j += k
     return False
 
-idProbe="23208"
-idMeas="2957509"
+idProbe = sys.argv[0]
+idMeas = sys.argv[1]
 
-conn = pymysql.connect(host="localhost",    # your host, usually localhost
-                       user="root",         # your username
-                       passwd="root",  # your password
-                       db="instability")  # name of the data base
+conn = pymysql.connect(host="localhost",  # your host, usually localhost
+                       user="periodicity",  # your username
+                       passwd="GLzyFWpbt2yZbAPs",  # your password
+                       db="periodicity")  # name of the data base
 conn.autocommit(True)
 
 cur = conn.cursor()
