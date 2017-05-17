@@ -40,8 +40,8 @@ def cyclic_equiv(u, v):
             j += k
     return False
 
-idProbe = sys.argv[0]
-idMeas = sys.argv[1]
+idProbe = sys.argv[1]
+idMeas = sys.argv[2]
 
 conn = pymysql.connect(host="localhost",  # your host, usually localhost
                        user="periodicity",  # your username

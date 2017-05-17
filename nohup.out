@@ -95,3 +95,25 @@ Traceback (most recent call last):
   File "PeriodicityCharacterizer.py", line 1, in <module>
     from nltk import ngrams
 ImportError: No module named nltk
+Traceback (most recent call last):
+  File "PeriodicityCharacterizer.py", line 54, in <module>
+    cur.execute("select * from idProbeAnchorToPaths where probeId="+idProbe+" and idMeas="+idMeas+";")
+  File "/usr/local/lib/python2.7/dist-packages/pymysql/cursors.py", line 166, in execute
+    result = self._query(query)
+  File "/usr/local/lib/python2.7/dist-packages/pymysql/cursors.py", line 322, in _query
+    conn.query(q)
+  File "/usr/local/lib/python2.7/dist-packages/pymysql/connections.py", line 856, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "/usr/local/lib/python2.7/dist-packages/pymysql/connections.py", line 1057, in _read_query_result
+    result.read()
+  File "/usr/local/lib/python2.7/dist-packages/pymysql/connections.py", line 1340, in read
+    first_packet = self.connection._read_packet()
+  File "/usr/local/lib/python2.7/dist-packages/pymysql/connections.py", line 1014, in _read_packet
+    packet.check_error()
+  File "/usr/local/lib/python2.7/dist-packages/pymysql/connections.py", line 393, in check_error
+    err.raise_mysql_exception(self._data)
+  File "/usr/local/lib/python2.7/dist-packages/pymysql/err.py", line 107, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.InternalError: (1054, u"Unknown column 'PeriodicityCharacterizer.py' in 'where clause'")
+{'4300': 'l', '1300': 'q', '700': 'h', '3800': 'e', '2900': 'w', '3000': 'D', '3900': 'v', '3300': 'j', '4800': 'u', '4700': 'i', '4000': 'd', '2300': 'c', '1500': 'A', '2400': 'o', '1400': 's', '500': 'a', '2500': 'f', '200': 'n', '3600': '@', '2700': 'x', '3400': 'p', '100': 'E', '4600': 'g', '1700': 'b', '900': 'y', '2100': 'k', '1800': 'r', '3500': 'm', '4400': 'C', '2000': 'B', '1100': 'z', '800': 't'}
+set(['ghijklmnopqkrstu', 'abaacadceffcfaef', 'ghijklmnopqkrstk', 'vwxyz@ABxCyDwzEv'])
