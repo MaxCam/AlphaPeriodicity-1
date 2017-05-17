@@ -1,10 +1,10 @@
-import urllib3.request, json
+import requests, json
 import pymysql
 from subprocess import call
 import md5
 
 def checkIfCached(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
-    hash = md5.new(defaultStart + defaultEnd + defaultMeasurement + defaultProbeId).digest()
+    hash = md5.new("" + str(defaultStart) + str(defaultEnd) + str(defaultMeasurement) + str(defaultProbeId)).digest()
     # search in mysql if hash exists
     return False
 
@@ -14,7 +14,7 @@ def getPeriodicityFromCache(defaultStart, defaultEnd, defaultMeasurement, defaul
 
 
 def cache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
-    hash = md5.new(defaultStart + defaultEnd + defaultMeasurement + defaultProbeId).digest()
+    hash = md5.new("" + str(defaultStart) + str(defaultEnd) + str(defaultMeasurement) + str(defaultProbeId)).digest()
     # store hash in mysql - table cache
     return True
 
@@ -32,10 +32,12 @@ def start_procedure(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId
     idProbeAnchorToIdsM=dict()
     traceroute=""
     conta=0
-    url="https://atlas.ripe.net/api/v2/measurements/"+defaultMeasurement+"/results?start="+defaultStart+"&stop="+defaultEnd+"&probe_ids="+defaultProbeId+"&format=json"
+    url="https://atlas.ripe.net/api/v2/measurements/"+str(defaultMeasurement)+"/results?start="+str(defaultStart)+"&stop="+str(defaultEnd)+"&probe_ids="+str(defaultProbeId)+"&format=json"
 
-    with urllib3.request.urlopen(url) as url:
-        data = json.loads(url.read().decode())
+    data = requests.get(url)
+    #return str(data.text)
+    if data:
+        data = data.json()
         if True:  # TODO parisIDen
             conta = conta + 1
             if True:  # TODO measIdent
@@ -176,6 +178,6 @@ def start_procedure(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId
     cur.close()
     conn.close()
 
-    call(["nohup python PeriodicityCharacterizer.py &"])
+    #call(["nohup python PeriodicityCharacterizer.py &"])
     return "We are calculating the periodicity, please refresh this page in a couple of minutes"
 
