@@ -4,6 +4,11 @@ import pymysql
 import textwrap
 import re
 
+def store(data):
+    #persist data on mysql - table periodicity
+    return True
+
+
 def repetitions(s):
    r = re.compile(r"(.+?)\1+")
    for match in r.finditer(s):
@@ -404,3 +409,5 @@ print(idTochar)
 
 #Elenco delle periodicita individuate
 print(periodicitaIndividuate)
+
+store("")

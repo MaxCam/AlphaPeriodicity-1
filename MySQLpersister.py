@@ -1,7 +1,34 @@
 import urllib3.request, json
 import pymysql
+from subprocess import call
+import md5
+
+def checkIfCached(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
+    hash = md5.new(defaultStart + defaultEnd + defaultMeasurement + defaultProbeId).digest()
+    # search in mysql if hash exists
+    return False
+
+def getPeriodicityFromCache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
+    # retrieve from mysql - table periodicity
+    return False # Return false if not yet calculated
+
+
+def cache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
+    hash = md5.new(defaultStart + defaultEnd + defaultMeasurement + defaultProbeId).digest()
+    # store hash in mysql - table cache
+    return True
 
 def run(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
+    periodicity = getPeriodicityFromCache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId)
+    if periodicity:
+        return periodicity
+    else:
+        if not checkIfCached(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
+            start_procedure(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId)
+        return "We are calculating the periodicity, please refresh this page in a couple of minutes"
+
+
+def start_procedure(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
     idProbeAnchorToIdsM=dict()
     traceroute=""
     conta=0
@@ -145,8 +172,10 @@ def run(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
                         p9) + "','" + str(p10) + "','" + str(p11) + "','" + str(p12) + "','" + str(p13) + "','" + str(
                         p14) + "','" + str(p15) + "','"+ str(probeId).strip() + "');")
 
+    cache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId)
     cur.close()
     conn.close()
 
-    return "fatto"
+    call(["nohup python PeriodicityCharacterizer.py &"])
+    return "We are calculating the periodicity, please refresh this page in a couple of minutes"
 
