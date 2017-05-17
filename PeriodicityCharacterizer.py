@@ -398,9 +398,9 @@ for id_proAncora in tracerouteToTimestamps:
 #     print(periodicita)
 
 
+if periodicitaTrovata is True:
+   #Elenco di corrispondenze caratteriIdentificatori
+   print(idTochar)
 
-#Elenco di corrispondenze caratteriIdentificatori
-print(idTochar)
-
-#Elenco delle periodicita individuate
-print(periodicitaIndividuate)
+   #Elenco delle periodicita individuate
+   print(periodicitaIndividuate)
