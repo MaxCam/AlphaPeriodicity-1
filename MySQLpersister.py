@@ -178,6 +178,6 @@ def start_procedure(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId
     cur.close()
     conn.close()
 
-    #call(["nohup python PeriodicityCharacterizer.py &"])
+    call(["nohup python PeriodicityCharacterizer.py &"], shell=True)
     return "We are calculating the periodicity, please refresh this page in a couple of minutes"
 

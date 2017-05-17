@@ -91,3 +91,7 @@ spawned uWSGI worker 1 (and the only) (pid: 393, cores: 1)
 [pid: 393|app: 0|req: 2/2] 127.0.0.1 () {42 vars in 1196 bytes} [Tue May 16 23:23:55 2017] GET /periodicity/ => generated 40 bytes in 0 msecs (HTTP/1.0 200) 1 headers in 44 bytes (1 switches on core 0)
 [pid: 393|app: 0|req: 3/3] 127.0.0.1 () {42 vars in 1196 bytes} [Tue May 16 23:23:55 2017] GET /periodicity/ => generated 40 bytes in 0 msecs (HTTP/1.0 200) 1 headers in 44 bytes (1 switches on core 0)
 [pid: 393|app: 0|req: 4/4] 127.0.0.1 () {42 vars in 1196 bytes} [Tue May 16 23:23:55 2017] GET /periodicity/ => generated 40 bytes in 0 msecs (HTTP/1.0 200) 1 headers in 44 bytes (1 switches on core 0)
+Traceback (most recent call last):
+  File "PeriodicityCharacterizer.py", line 1, in <module>
+    from nltk import ngrams
+ImportError: No module named nltk
