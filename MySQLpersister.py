@@ -3,28 +3,37 @@ import pymysql
 from subprocess import call
 import md5
 
-def checkIfCached(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
+def checkIfCached(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur):
     hash = md5.new("" + str(defaultStart) + str(defaultEnd) + str(defaultMeasurement) + str(defaultProbeId)).digest()
     # search in mysql if hash exists
+    cur.execute("SELECT hash from cache where hash='" + hash + "'")
+
+    for record in cur.fetchall():
+        return True
     return False
 
-def getPeriodicityFromCache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
-    # retrieve from mysql - table periodicity
-    return False # Return false if not yet calculated
+def getPeriodicityFromCache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur):
+    hash = md5.new("" + str(defaultProbeId) + str(defaultMeasurement)).digest()  # we should use also time
+    cur.execute("SELECT body from periodicity where hash='" + hash + "'")
+
+    for record in cur.fetchall():
+        return record
+    return False  # Return false if not yet calculated
 
 
-def cache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
+def cache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur):
     hash = md5.new("" + str(defaultStart) + str(defaultEnd) + str(defaultMeasurement) + str(defaultProbeId)).digest()
     # store hash in mysql - table cache
+    cur.execute("INSERT INTO cache (hash) VALUES ('" + hash + "')")
     return True
 
-def run(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
-    periodicity = getPeriodicityFromCache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId)
+def run(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur):
+    periodicity = getPeriodicityFromCache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur)
     if periodicity:
-        return periodicity
+        return str(periodicity)
     else:
-        if not checkIfCached(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId):
-            start_procedure(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId)
+        if not checkIfCached(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur):
+            start_procedure(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur)
         return "We are calculating the periodicity, please refresh this page in a couple of minutes"
 
 
@@ -174,7 +183,7 @@ def start_procedure(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId
                         p9) + "','" + str(p10) + "','" + str(p11) + "','" + str(p12) + "','" + str(p13) + "','" + str(
                         p14) + "','" + str(p15) + "','"+ str(probeId).strip() + "');")
 
-    cache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId)
+    cache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur)
     cur.close()
     conn.close()
 

@@ -4,10 +4,12 @@ import pymysql
 import textwrap
 import re
 import sys
+import md5
 
-def store(data):
+def store(idProbe, idMeas, data):
+    hash = md5.new("" + str(idProbe) + str(idMeas)).digest()
     #persist data on mysql - table periodicity
-    return True
+    return cur.execute("INSERT INTO periodicity (hash, body) VALUES ('" + str(data) + "')")  # we should use also time
 
 
 def repetitions(s):
@@ -406,9 +408,12 @@ for id_proAncora in tracerouteToTimestamps:
 
 
 #Elenco di corrispondenze caratteriIdentificatori
-print(idTochar)
+# print(idTochar)
 
 #Elenco delle periodicita individuate
-print(periodicitaIndividuate)
+# print(periodicitaIndividuate)
 
-store("")
+store(idProbe, idMeas, {
+    "idTochar": idTochar,
+    "periodicitaIndividuate": periodicitaIndividuate
+})
