@@ -30,7 +30,7 @@ def cache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur):
 def run(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur):
     periodicity = getPeriodicityFromCache(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur)
     if periodicity:
-        return str(periodicity)
+        return str(periodicity)  # Instead of this, post the JSON to the visualisation page, e' nammerda but it allows us to don't split the code
     else:
         if not checkIfCached(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur):
             start_procedure(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId, cur)
@@ -188,5 +188,5 @@ def start_procedure(defaultStart, defaultEnd, defaultMeasurement, defaultProbeId
     conn.close()
 
     call(["nohup python PeriodicityCharacterizer.py " + str(defaultProbeId) + " " + str(defaultMeasurement) + " &"], shell=True)
-    return "We are calculating the periodicity, please refresh this page in a couple of minutes"
+
 
