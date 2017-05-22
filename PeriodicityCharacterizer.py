@@ -363,8 +363,7 @@ for id_proAncora in tracerouteToTimestamps:
 
 
                     if numberOscillation in globalOscillationToCount.keys():
-                        globalOscillationToCount[numberOscillation]+=1
-                    else:
+                        globalOscillationToCount[numberOscillation]+=1                    else:
                         globalOscillationToCount[numberOscillation]=1
 
                     if patternLength in globalPatternLegthToCount.keys():
@@ -404,14 +403,6 @@ for id_proAncora in tracerouteToTimestamps:
 #     print("**********")
 #     print(stringa[:-1])
 #     print(periodicita)
-
-
-
-#Elenco di corrispondenze caratteriIdentificatori
-# print(idTochar)
-
-#Elenco delle periodicita individuate
-# print(periodicitaIndividuate)
 
 store(idProbe, idMeas, {
     "idTochar": idTochar,
