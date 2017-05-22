@@ -9,7 +9,7 @@ import md5
 def store(idProbe, idMeas, data):
     hash = md5.new("" + str(idProbe) + str(idMeas)).digest()
     #persist data on mysql - table periodicity
-    return cur.execute("INSERT INTO periodicity (hash, body) VALUES ('" + str(data) + "')")  # we should use also time
+    return cur.execute("INSERT INTO periodicity (hash, body) VALUES ('" + hash + "', '" + str(data) + "')")  # we should use also time
 
 
 def repetitions(s):
