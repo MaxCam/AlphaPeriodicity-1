@@ -3,6 +3,14 @@ import operator
 import pymysql
 import textwrap
 import re
+import sys
+import md5
+
+def store(idProbe, idMeas, data):
+    hash = md5.new("" + str(idProbe) + str(idMeas)).digest()
+    #persist data on mysql - table periodicity
+    return cur.execute("INSERT INTO periodicity (hash, body) VALUES ('" + hash + "', '" + str(data) + "')")  # we should use also time
+
 
 def repetitions(s):
    r = re.compile(r"(.+?)\1+")
@@ -34,13 +42,13 @@ def cyclic_equiv(u, v):
             j += k
     return False
 
-idProbe="23208"
-idMeas="2957509"
+idProbe = sys.argv[1]
+idMeas = sys.argv[2]
 
-conn = pymysql.connect(host="localhost",    # your host, usually localhost
-                       user="root",         # your username
-                       passwd="root",  # your password
-                       db="instability")  # name of the data base
+conn = pymysql.connect(host="localhost",  # your host, usually localhost
+                       user="periodicity",  # your username
+                       passwd="GLzyFWpbt2yZbAPs",  # your password
+                       db="periodicity")  # name of the data base
 conn.autocommit(True)
 
 cur = conn.cursor()
@@ -355,8 +363,7 @@ for id_proAncora in tracerouteToTimestamps:
 
 
                     if numberOscillation in globalOscillationToCount.keys():
-                        globalOscillationToCount[numberOscillation]+=1
-                    else:
+                        globalOscillationToCount[numberOscillation]+=1                    else:
                         globalOscillationToCount[numberOscillation]=1
 
                     if patternLength in globalPatternLegthToCount.keys():
@@ -397,10 +404,7 @@ for id_proAncora in tracerouteToTimestamps:
 #     print(stringa[:-1])
 #     print(periodicita)
 
-
-if periodicitaTrovata is True:
-   #Elenco di corrispondenze caratteriIdentificatori
-   print(idTochar)
-
-   #Elenco delle periodicita individuate
-   print(periodicitaIndividuate)
+store(idProbe, idMeas, {
+    "idTochar": idTochar,
+    "periodicitaIndividuate": periodicitaIndividuate
+})
