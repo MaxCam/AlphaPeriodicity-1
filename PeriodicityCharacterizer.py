@@ -362,7 +362,8 @@ for id_proAncora in tracerouteToTimestamps:
 
 
                     if numberOscillation in globalOscillationToCount.keys():
-                        globalOscillationToCount[numberOscillation]+=1                    else:
+                        globalOscillationToCount[numberOscillation]+=1                    
+                    else:
                         globalOscillationToCount[numberOscillation]=1
 
                     if patternLength in globalPatternLegthToCount.keys():
@@ -383,7 +384,7 @@ for id_proAncora in tracerouteToTimestamps:
 if(periodicitaTrovata==True):
     store(idProbe, idMeas, {
         "idTochar": idTochar,
-        "idToTraceroute":globalIdToTraceroute,
+        #"idToTraceroute":globalIdToTraceroute,
         "periodicitaIndividuate": periodicitaIndividuate, #lista delle periodicita  in caratteri
      #   "gdbDiagramData":GDBdString #corrisponde al file gdbDiagramData.tsv ceh veniva letto in precedenza
     })
@@ -391,7 +392,7 @@ if(periodicitaTrovata==True):
 else:
     store(idProbe, idMeas, {
         "idTochar": "noPeriodicity",
-        "idToTraceroute":globalIdToTraceroute,
+        #"idToTraceroute":globalIdToTraceroute,
         "periodicitaIndividuate": "noPeriodicity", #lista delle periodicita  in caratteri
       #  "gdbDiagramData":GDBdString #corrisponde al file gdbDiagramData.tsv ceh veniva letto in precedenza
     })
