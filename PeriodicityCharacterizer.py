@@ -9,8 +9,7 @@ import md5
 def store(idProbe, idMeas, data):
     hash = md5.new("" + str(idProbe) + str(idMeas)).digest()
     #persist data on mysql - table periodicity
-    return cur.execute("INSERT INTO periodicity (hash, body) VALUES ('" + hash + "', '" + str(data) + "')")  # we should use also time
-
+    return cur.execute('INSERT INTO periodicity (hash, body) VALUES ("'+hash+'","' + str(data) + '")')  # we should use also time
 
 def repetitions(s):
    r = re.compile(r"(.+?)\1+")
@@ -381,7 +380,21 @@ for id_proAncora in tracerouteToTimestamps:
     if periodicitaTrovata is True:
         periodicita+=1
 
+if(periodicitaTrovata==True):
+    store(idProbe, idMeas, {
+        "idTochar": idTochar,
+        "idToTraceroute":globalIdToTraceroute,
+        "periodicitaIndividuate": periodicitaIndividuate, #lista delle periodicita  in caratteri
+     #   "gdbDiagramData":GDBdString #corrisponde al file gdbDiagramData.tsv ceh veniva letto in precedenza
+    })
 
+else:
+    store(idProbe, idMeas, {
+        "idTochar": "noPeriodicity",
+        "idToTraceroute":globalIdToTraceroute,
+        "periodicitaIndividuate": "noPeriodicity", #lista delle periodicita  in caratteri
+      #  "gdbDiagramData":GDBdString #corrisponde al file gdbDiagramData.tsv ceh veniva letto in precedenza
+    })
 
 
 #print(periodicita)
@@ -404,7 +417,7 @@ for id_proAncora in tracerouteToTimestamps:
 #     print(stringa[:-1])
 #     print(periodicita)
 
-store(idProbe, idMeas, {
-    "idTochar": idTochar,
-    "periodicitaIndividuate": periodicitaIndividuate
-})
+#store(idProbe, idMeas, {
+#    "idTochar": idTochar,
+#    "periodicitaIndividuate": periodicitaIndividuate
+#})
