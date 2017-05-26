@@ -4,8 +4,30 @@ import pymysql
 import textwrap
 import re
 import sys
+import math
 import md5
 
+def numberDistinctPath(prev):
+    ids=set()
+    for id in prev:
+      #  print(id)
+        ids.add(id)
+
+    return len(ids)
+
+def isAPeak(lag, listACFValues):
+    if listACFValues[lag]> listACFValues[lag-1] and listACFValues[lag]> listACFValues[lag+1]:
+        if listACFValues[lag]> listACFValues[lag-2] and listACFValues[lag]> listACFValues[lag+2]:         
+            if listACFValues[lag]> listACFValues[lag-3] and listACFValues[lag]> listACFValues[lag+3]:
+                return True
+    return False
+
+def computeTollerance(lengthGram):
+    if(lengthGram<3):
+        return 0
+    else:
+        return 1
+        
 def store(idProbe, idMeas, data):
     hash = md5.new("" + str(idProbe) + str(idMeas)).digest()
     #persist data on mysql - table periodicity
@@ -52,12 +74,12 @@ conn.autocommit(True)
 
 cur = conn.cursor()
 
-cur.execute("select * from idProbeAnchorToPaths where probeId="+idProbe+" and idMeas="+idMeas+";")
-#cur.execute("select * from tracerouteWithDifferentParisMEM where id_probeAnchor='23208-200.7.6.40'")#solo per test
+cur.execute("select distinct id_probeAnchor from idProbeAnchorToPaths where probeId="+idProbe+" and idMeas="+idMeas+";")
+#cur.execute("select distinct id_probeAnchor from mydef2 where id_probeAnchor='10124-193.170.114.242'")#solo per test
 
 queryOutput= cur.fetchall()
 tracerouteToTimestamps=list()
-
+periodicitaTrovata=False
 for record in queryOutput:
     tracerouteToTimestamps.append(record[0])
 
@@ -68,357 +90,318 @@ globalDistinctCharacterToCount=dict()
 globalPatternLegthToCount=dict()
 globalOscillationToCount=dict()
 globalPeriodicityLengthToCount=dict()
+globalIdToTraceroute=dict()
+
+globalCharacterToID=dict()
 
 idToCharacter=dict()
-asciiCount=97 #lettere minuscole
+
+
+periodicityToStartAndStop=dict()
 
 for id_proAncora in tracerouteToTimestamps:
-    patternToPeriodi=dict()
-    periodicitaIndividuate=set()
-    cur.execute("select * from idProbeAnchorToPaths where id_probeAnchor='"+str(id_proAncora)+"'")
+    try:
+        patternToPeriodi=dict()
+        periodicitaIndividuate=set()
+        cur.execute("select * from idProbeAnchorToPaths where id_probeAnchor='"+str(id_proAncora)+"'")#TODO da ricambiare in idProbeAnchorToPaths
 
-    queryOutput= cur.fetchall()
+        queryOutput= cur.fetchall()
 
-    tracerouteToTimestamps=dict()
+        tracerouteToTimestamps=dict()
 
-    for record in queryOutput:
-        tracerouteValue=(str(record[7]))
-        listTimestampValue=str(record[6])
-        reachingTarget= str(record[3])
+        for record in queryOutput:
+            tracerouteValue=(str(record[7]))
+            listTimestampValue=str(record[6])
+            reachingTarget= str(record[3])
 
-        tracerouteToTimestamps[tracerouteValue]= listTimestampValue, reachingTarget
+            tracerouteToTimestamps[tracerouteValue]= listTimestampValue, reachingTarget
 
-    newTrace=dict()
+        newTrace=dict()
 
-    count=100
+        count=100
 
-    for traceroute in tracerouteToTimestamps:
-        lineaFile = ""
+        for traceroute in tracerouteToTimestamps:
+            lineaFile = ""
 
-        listaTimestamp= tracerouteToTimestamps.get(traceroute)[0]
-        reachingTarget=tracerouteToTimestamps.get(traceroute)[1]
+            listaTimestamp= tracerouteToTimestamps.get(traceroute)[0]
+            reachingTarget=tracerouteToTimestamps.get(traceroute)[1]
 
-        listaTimestamp = listaTimestamp.split(';;')
+            listaTimestamp = listaTimestamp.split(';;')
 
-        numbersOfTimestamps = len(listaTimestamp)
+            numbersOfTimestamps = len(listaTimestamp)
 
-        for counter in range(0, numbersOfTimestamps - 1):
-            if(reachingTarget=="False"):
-                 newTrace[listaTimestamp[counter]]= str(0-count), str(traceroute),str(reachingTarget)
-
-
-            if(reachingTarget=="True"):
-                 newTrace[listaTimestamp[counter]]= str(count), str(traceroute),str(reachingTarget)
-
-        count=count+100
-
-    l=newTrace.keys()
-    listaOrdinataDiChiaviTraceroute= sorted(l)
-
-    prev=listaOrdinataDiChiaviTraceroute[0]
+            for counter in range(0, numbersOfTimestamps - 1):
+                if(reachingTarget=="False"):
+                     newTrace[listaTimestamp[counter]]= str(0-count), str(traceroute),str(reachingTarget)
+                     globalIdToTraceroute[str(0-count)]=str(traceroute)
 
 
-    for contaOrdinato in range(1, len(listaOrdinataDiChiaviTraceroute)):
-        next=listaOrdinataDiChiaviTraceroute[contaOrdinato]
+                if(reachingTarget=="True"):
+                     newTrace[listaTimestamp[counter]]= str(count), str(traceroute),str(reachingTarget)
+                     globalIdToTraceroute[str(count)]=str(traceroute)
 
-        while(int(next)>(int(prev)+1300)):
-            newTrace[str(int(prev)+900)]= str(0), str("NA") , str("False")
-            prev=str(int(prev)+900)
+            count=count+100
 
-        if(int(next)<(int(prev)+1500)):
-            prev=next
+        l=newTrace.keys()
+        listaOrdinataDiChiaviTraceroute= sorted(l)
 
-
-    l=newTrace.keys()
-    listaOrdinataDiChiaviTraceroute= sorted(l)
-
-    out_file = open("listaTraceroute.tsv", "w")
-
-    co = 0
-    t = "0"
-    rt = "False"
-
-    for traceroute in range(0, len(listaOrdinataDiChiaviTraceroute)):
-        l = listaOrdinataDiChiaviTraceroute[traceroute]
-
-        out_file.write(newTrace.get(l)[0]+",\n")
-        out_file.write(newTrace.get(l)[0]+",\n")
-
-        t = str(str(newTrace.get(l)[0]))
-
-    out_file.close()
-
-    periodicitaTrovata=False
-    '''acf'''
-    i=0
-    tracerouteIdsList=[]
+        prev=listaOrdinataDiChiaviTraceroute[0]
 
 
-    #salvo tutti gli id  in una lista
-    with open('listaTraceroute.tsv') as f:
-        pass
-        for line in f:
-          if(i%2==0):
-              tracerouteIdsList.append(line.strip())
-          i+=1
+        for contaOrdinato in range(1, len(listaOrdinataDiChiaviTraceroute)):
+            next=listaOrdinataDiChiaviTraceroute[contaOrdinato]
+
+            while(int(next)>(int(prev)+1300)):
+                newTrace[str(int(prev)+900)]= str(0), str("NA") , str("False")
+                prev=str(int(prev)+900)
+
+            if(int(next)<(int(prev)+1500)):
+                prev=next
 
 
+        l=newTrace.keys()
+        listaOrdinataDiChiaviTraceroute= sorted(l)
 
-    #associo ad ogni id un carattere
-    for id in tracerouteIdsList:
-        if id not in idToCharacter.keys():
-            idToCharacter[id]=chr(asciiCount)
-            if(asciiCount==122):
-                asciiCount=64 #maiuscole
+        GDBdString=""
+        GDBdString+=("date\tclose\n")
+       
+        out_file=open("gdbData.tsv","w")
+        out_file.write("date\tclose\n")
 
-            else:
-                asciiCount+=1
-
-    charTracerouteSequence=[]
-
-    #trasformo la sequenza di id in una sequenza di caratteri
-    for id in tracerouteIdsList:
-        charTracerouteSequence.append(idToCharacter[id])
-
-    a1=charTracerouteSequence[:]
-    a2=charTracerouteSequence[:]
-
-    out_file=open("autocorrelationWithMatch.txt","w")
-    out_file.write("x,y\n")
-    for k in range(0,len(charTracerouteSequence)):
-        sommaUguali=0
-        for count in range(0,len(a1)):
-            if(a1[count]==a2[count]):
-                sommaUguali+=1
-
-        out_file.write(str(k)+","+str(sommaUguali)+"\n")
-        a1 = a1[1:]
-        a2 = a2[:-1]
-
-    out_file.close()
-
-    listId=list()
-    with open('autocorrelationWithMatch.txt') as f:
-        pass
-        for line in f:
-          count=line.split(",")[1].strip()
-          listId.append(count)
+        co=0
+        t="0"
+        rt="False"
 
 
-    out_file=open("sortedByX.txt","w")
-    out_file.write("x\ty\n")
+        for traceroute in range(0, len(listaOrdinataDiChiaviTraceroute)):
+            l=listaOrdinataDiChiaviTraceroute[traceroute]
+            co=co+1
+            GDBdString+=(str(co)+"\t"+str(t)+"\t"+newTrace.get(l)[1]+"\t"+str(l)  +"\t"+ str(newTrace.get(l)[2]+"\n" ))
+            out_file.write(str(co)+"\t"+str(t)+"\t"+newTrace.get(l)[1]+"\t"+str(l)  +"\t"+ str(newTrace.get(l)[2]+"\n" ))
+            t=""
 
-    for counter in range(4,len(listId)-4):
-        if(listId[counter]>listId[counter+1] and listId[counter]>listId[counter-1]):
-            if (listId[counter] > listId[counter + 2] and listId[counter] > listId[counter - 2]):
-                if (listId[counter] > listId[counter + 3] and listId[counter] > listId[counter - 3]):
-                    if(counter<(len(listId)-4)/2):
-                        out_file.write(str(counter)+"\t"+str(int(listId[counter]))+"\n")
-    out_file.close()
-
-
-    i=0
-    stringatrace=""
-
-    '''trasforma l'elenco in una stringa per facilitare l'ngramm'''
-    with open('listaTraceroute.tsv') as f:
-        pass
-        for line in f:
-            if (i % 2 == 0):
-             stringatrace=stringatrace+" "+line.strip()
-            i+=1
+            GDBdString+=(str(co)+"\t"+newTrace.get(l)[0]+"\t"+newTrace.get(l)[1]+"\t"+str(l) + "\t"+ str(newTrace.get(l)[2]+"\n"))
+            out_file.write(str(co)+"\t"+newTrace.get(l)[0]+"\t"+newTrace.get(l)[1]+"\t"+str(l) + "\t"+ str(newTrace.get(l)[2]+"\n"))
+            
+            t= str(str(newTrace.get(l)[0]))
 
 
-    listId=list()
-    di=dict()
-    l=0
+        GDBdString+=(str(co+1)+"\t"+newTrace.get(l)[0]+"\t"+newTrace.get(l)[1]+"\n")
+        t= str(str(newTrace.get(l)[0]))   +"\t"+newTrace.get(l)[1]+"\t"+str(l) + "\t"+ str(newTrace.get(l)[2])
 
-    '''esamina le x dei picchi per individuare le frequenze'''
-    with open('sortedByX.txt') as f:
-        for line in f:
-            if l is not 0:
-              count=line.split("\t")[0].strip()
-              listId.append(count)
-            l+=1
+        out_file.close()
 
+        listaIDTraceroute=list()
 
-    for c in range(1,len(listId)):
-        diff= (int(listId[c])-int(listId[c-1]))
-        if diff in di:
-            di[diff]+=1
-        else:
-            di[diff]=1
+        for traceroute in range(0, len(listaOrdinataDiChiaviTraceroute)): #qui veniva generato il traceroute.tsv
+            l = listaOrdinataDiChiaviTraceroute[traceroute]
 
-    idTochar = dict()
-    for m in di.keys():
+          #  listaIDTraceroute.append(newTrace.get(l)[0].strip())
+            listaIDTraceroute.append(newTrace.get(l)[0].strip())
+
+            t = str(str(newTrace.get(l)[0]))
+
+        periodicitaTrovata=False
 
 
-        sentence = stringatrace
-        n = int(m)
-        sixgrams = ngrams(sentence.split(), n)
-
-        diz=dict()
+        '''acf'''
         i=0
+        tracerouteIDUnique=set()
 
-        for grams in sixgrams:
-            if i==0:
-                prev=grams
+        for tracerrouteId in listaIDTraceroute:
+            tracerouteIDUnique.add(tracerrouteId)
+
+        charTracerouteSequence=list()
+
+        lagToScore=dict()
+
+        #trasformo la sequenza di id in una sequenza di caratteri
+        for id in listaIDTraceroute:
+      #      charTracerouteSequence.append(idToCharacter[id])
+         charTracerouteSequence.append(id)
+
+
+        a1=charTracerouteSequence[:]
+        a2=charTracerouteSequence[:]
+
+        for k in range(0,len(charTracerouteSequence)):
+            sommaUguali=0
+            for count in range(0,len(a1)):
+                if(a1[count]==a2[count]):
+                    sommaUguali+=1
+
+            lagToScore[k]=sommaUguali
+            
+            a1 = a1[1:]
+            a2 = a2[:-1]
+
+
+        ACFValuesList=list()
+        lagToValuesOfPeaks=dict()
+
+        for lag in lagToScore:
+            ACFValuesList.append(lagToScore[lag])
+
+        #indiviidua i picchi
+        for counter in range (3,len(ACFValuesList)):
+            if isAPeak(counter,ACFValuesList):
+                lagToValuesOfPeaks[counter]=ACFValuesList[counter]
+
+
+        i=0
+        stringatrace=""
+
+        '''trasforma l'elenco in una stringa per facilitare l'ngramm'''
+
+        for id in listaIDTraceroute:
+            stringatrace+=" "+id.strip()
+
+        estimatedPeriods=list()
+        di=dict()
+        l=0
+
+        for peakLag in lagToValuesOfPeaks:
+            estimatedPeriods.append(peakLag)
+
+        for c in range(1,len(estimatedPeriods)):
+            diff= (int(estimatedPeriods[c])-int(estimatedPeriods[c-1]))
+            if diff in di:
+                di[diff]+=1
             else:
-                if(i%n==0):
-                    if grams==prev:
-                        if grams in diz:
-                            diz[grams] += 1
+                di[diff]=1
+
+
+        sorted_ByY=sorted(lagToValuesOfPeaks.items(),key=operator.itemgetter(1))
+        sortedByYList=list()
+
+        for c in sorted_ByY:
+            sortedByYList.append(c)
+
+        for c in range(1,len(sortedByYList)):
+            diff= abs((int(sortedByYList[c][0])-int(sortedByYList[c-1][0])))
+            if diff in di:
+                di[diff]+=1
+            else:
+                di[diff]=1
+
+        idTochar = dict()
+
+
+
+        for m in di.keys():
+
+
+            sentence = stringatrace
+            n = int(m)
+            sixgrams = ngrams(sentence.split(), n)
+
+            diz=dict()
+            i=0
+
+            for grams in sixgrams:
+                if i==0:
+                    prev=grams
+                else:
+                    if(i%n==0):
+                        if hamdist(grams,prev)<computeTollerance(len(grams)):
+                            if grams in diz:
+                                diz[grams] += 1
+                                prev=grams
+                            else:
+                                diz[grams] = 1
+                                prev=grams
+
                         else:
-                            diz[grams] = 1
-                    else:
-                        prev=grams
-            i+=1
+                            prev=grams
+                i+=1
 
-        currentPeriodicitaTrovate=list()
+            currentPeriodicitaTrovate=list()
 
-        asciiCount = 97
 
-        for m in diz:
-            idsPresent=set()
-            tuttoUguale=True
-            if diz[m]>0:
-                prev=m[0]
-                for counter in range(0,len(m)):
-                    idsPresent.add(m[counter])
-                    if len(idsPresent)>1:#almeno 3
-                        tuttoUguale=False
-                        break
-                if tuttoUguale is False:
-                  stringa=""
-                  for patternCharacter in m:
-                      if(patternCharacter[:-1] not in idTochar.keys()):
-                         # print("no")
-                          idTochar[patternCharacter[:-1]]=chr(asciiCount)
-                          if(asciiCount == 122):
-                                asciiCount = 64
-                          else:
-                            asciiCount+=1
-                      stringa+=str(idTochar[patternCharacter[:-1]])
+            for patternFound in diz:
 
-                  periodicitaIndividuate.add(stringa)
+                idsPresent=set()
+                tuttoUguale=True
+                if diz[patternFound]>0: #inutile, rifattorizzare
+                    prev=patternFound[0]
 
-                  osservazioneToStringa=""
-                  periodicitaTrovata = True
+                    for counter in range(0,len(patternFound)):
 
-    if(periodicitaTrovata is True):
-            with open('listaTraceroute.tsv') as f:
-                          pass
-                          for line in f:
-                              if (i % 2 == 0):
-                                  if(line.strip()[:-1] in idTochar):
-                                      osservazioneToStringa+=str(idTochar[line.strip()[:-1]])
-                                  else:
-                                      osservazioneToStringa+=("X")
-                              i += 1
+                        idsPresent.add(patternFound[counter])
+                        if len(idsPresent)>1:#almeno 3
+                            tuttoUguale=False
+                            break   #ce ne sono almeno 2 !!!!!!!!
 
-            for pattern in periodicitaIndividuate:
-                max=0
-                lunghezzaPattern=len(pattern)
+                    if tuttoUguale is False:
+                      stringaPeriodicita=""
 
-                substring = textwrap.wrap(osservazioneToStringa, lunghezzaPattern)
+                      for id in patternFound:
+                        stringaPeriodicita+=id+" "
+                      stringaPeriodicita=stringaPeriodicita.strip()
+                      periodicitaIndividuate.add(stringaPeriodicita)
 
-                dizionario = dict()
-                conta = 0
-                somma = 2
+                      osservazioneToStringa=stringatrace
+                      periodicitaTrovata = True
 
-                for it in range(0, len(substring)):
 
-                    subsequence = substring[it]
+        if(periodicitaTrovata is True):
+                for pattern in periodicitaIndividuate:
+                    max=0
+                    lunghezzaPattern=len(pattern)
+                    
 
-                    if conta == 0:
-                        prev = subsequence
-                    else:
-                        if hamdist(prev, subsequence) ==0:
-                            somma += 1
+                    numeroSpaziBianchi=1
+                    for carattere in pattern:
+                        if carattere==" ":
+                            numeroSpaziBianchi+=1
+
+
+                    sentence = osservazioneToStringa
+                    n = numeroSpaziBianchi
+                    ngramsFound = ngrams(listaIDTraceroute, n)
+
+                    i=0
+                    periodicitaIncorso=False
+                    for grams in ngramsFound:
+                        if(i==0):
+                            prev=grams
+                            i+=1
                         else:
-                            somma=1
+                            if(i%n==0):
+                                if(hamdist(prev,grams)<computeTollerance(len(prev))):
+                                    if(periodicitaIncorso==False):
+                                        periodicitaIncorso=True
+                                        inizio=i-len(prev)
+                                else:
+                                    if(periodicitaIncorso==True):
+                                        periodicitaIncorso=False
+                                        if(numberDistinctPath(prev)>1):
+                                            periodicityToStartAndStop[str(prev)+"-"+str(inizio)]=[inizio,i]
 
-                        prev = subsequence
-                    conta += 1
-                if(somma>max):
-                    max=somma
-                patternToPeriodi[pattern]=max
+                                prev=grams
+                            i+=1
 
-            for s in patternToPeriodi:
-                patternLength=len(s)
+        periodicita=0
+        if periodicitaTrovata is True:
+            periodicita+=1
 
-                numberOscillation=patternToPeriodi[s]
-                periodicityLength=int(patternLength)*int(numberOscillation)
+    except:
+        pass
 
-                differentChar=set()
-                for character in s:
-                    differentChar.add(character)
+    if(periodicitaTrovata==True):
+        store("idProbe", "idMeas", {
+            "idToTraceroute":globalIdToTraceroute,
+            "periodicitaIndividuate": periodicitaIndividuate, #lista delle periodicita  in caratteri
+         #   "gdbDiagramData":GDBdString #corrisponde al file gdbDiagramData.tsv ceh veniva letto in precedenza
+        })
+     #   print(globalIdToTraceroute)
+    else:
+        store("idProbe", "idMeas", {
+            "idToTraceroute":globalIdToTraceroute,
+            "periodicitaIndividuate": "noPeriodicity", #lista delle periodicita  in caratteri
+          #  "gdbDiagramData":GDBdString #corrisponde al file gdbDiagramData.tsv ceh veniva letto in precedenza
+        })
 
-                if(len(differentChar)>1):
-                    if len(differentChar) in globalDistinctCharacterToCount.keys():
-                        globalDistinctCharacterToCount[len(differentChar)]+=1
-                    else:
-                        globalDistinctCharacterToCount[len(differentChar)] = 1
+#print(periodicityToStartAndStop)
 
-
-                    if numberOscillation in globalOscillationToCount.keys():
-                        globalOscillationToCount[numberOscillation]+=1                    
-                    else:
-                        globalOscillationToCount[numberOscillation]=1
-
-                    if patternLength in globalPatternLegthToCount.keys():
-                        globalPatternLegthToCount[patternLength]+=1
-                    else:
-                        globalPatternLegthToCount[patternLength] = 1
-
-                    if periodicityLength in globalPeriodicityLengthToCount:
-                        globalPeriodicityLengthToCount[periodicityLength]+=1
-                    else:
-                        globalPeriodicityLengthToCount[periodicityLength] = 1
-
-
-    periodicita=0
-    if periodicitaTrovata is True:
-        periodicita+=1
-
-if(periodicitaTrovata==True):
-    store(idProbe, idMeas, {
-        "idTochar": idTochar,
-        #"idToTraceroute":globalIdToTraceroute,
-        "periodicitaIndividuate": periodicitaIndividuate, #lista delle periodicita  in caratteri
-     #   "gdbDiagramData":GDBdString #corrisponde al file gdbDiagramData.tsv ceh veniva letto in precedenza
-    })
-
-else:
-    store(idProbe, idMeas, {
-        "idTochar": "noPeriodicity",
-        #"idToTraceroute":globalIdToTraceroute,
-        "periodicitaIndividuate": "noPeriodicity", #lista delle periodicita  in caratteri
-      #  "gdbDiagramData":GDBdString #corrisponde al file gdbDiagramData.tsv ceh veniva letto in precedenza
-    })
-
-
-#print(periodicita)
-#print(globalPeriodicityLengthToCount)
-#print(globalPatternLegthToCount)
-#print(globalOscillationToCount)
-#print(globalDistinctCharacterToCount)
-#print(idTochar)
-#print(periodicitaIndividuate)
-
-# charToId=dict()
-# for id in idTochar:
-#     charToId[id]=idTochar[id]
-#
-# for periodicita in periodicitaIndividuate:
-#     stringa=""
-#     for carattere in periodicita:
-#         stringa+=charToId[carattere]+"-"
-#     print("**********")
-#     print(stringa[:-1])
-#     print(periodicita)
-
-#store(idProbe, idMeas, {
-#    "idTochar": idTochar,
-#    "periodicitaIndividuate": periodicitaIndividuate
-#})
+#print(GDBdString)
