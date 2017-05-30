@@ -23,6 +23,12 @@ def errorMessage():
     response_json["message"] = "Input error. Please provide valid parameters."
     return HttpResponse(json.dumps(response_json), content_type="application/json")
 
+def errorMessageWeek():
+    response_json = {}
+
+    response_json["message"] = "Input error. Please, provide a valid time interval (no longer than a week)."
+    return HttpResponse(json.dumps(response_json), content_type="application/json")
+
 
 
 class PeriodicityIndex(View):
@@ -37,7 +43,12 @@ class PeriodicityAnalyzer(View):
             defaultStart=int(request.GET.get('start', None).strip())
             defaultEnd=int(request.GET.get('stop', None).strip())
             defaultMeasurement=int(request.GET.get('measurement', None).strip())
+            if(defaultEnd-defaultStart<(1000+7*24*60*60)):
+                outputJson=calcolaPeriodicityNew(probe,defaultStart,defaultEnd,defaultMeasurement)
+            else:
+                return HttpResponse(errorMessageWeek())
+
         except:
             return HttpResponse(errorMessage())
 
-        return HttpResponse(calcolaPeriodicityNew(probe,defaultStart,defaultEnd,defaultMeasurement))
+        return HttpResponse(outputJson)
