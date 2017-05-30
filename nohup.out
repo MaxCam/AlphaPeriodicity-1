@@ -1,0 +1,56 @@
+[30/May/2017 17:09:43] "GET /periodicity/ HTTP/1.0" 200 201236
+Not Found: /periodicity-calculate/
+[30/May/2017 17:09:51] "GET /periodicity-calculate/?start=1495559400&stop=1496164200&probe=6223&measurement=1664730 HTTP/1.0" 404 2223
+[30/May/2017 17:09:56] "GET /periodicity/ HTTP/1.0" 200 201236
+Not Found: /periodicity-calculate/
+[30/May/2017 17:10:03] "GET /periodicity-calculate/?start=1495559400&stop=1496164200&probe=6223&measurement=1664730 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:10:04] "GET /periodicity-calculate/?start=1495559400&stop=1496164200&probe=6223&measurement=1664730 HTTP/1.0" 404 2223
+[30/May/2017 17:10:18] "GET /periodicity/ HTTP/1.0" 200 201236
+[30/May/2017 17:10:39] "GET /periodicity/calculate/?start=1495559449&stop=1496164249&probe=17758&measurement=4377618 HTTP/1.0" 200 929
+Not Found: /periodicity-calculate/
+[30/May/2017 17:10:49] "GET /periodicity-calculate/?start=1495559458&stop=1496164258&probe=22583&measurement=1733341 HTTP/1.0" 404 2224
+[30/May/2017 17:11:08] "GET /periodicity/calculate/?start=1495559449&stop=1496164249&probe=6033&measurement=4377618 HTTP/1.0" 200 1524
+[30/May/2017 17:11:14] "GET /periodicity/calculate/?start=1495559449&stop=1496164249&probe=6022&measurement=4377618 HTTP/1.0" 200 1709
+[30/May/2017 17:11:54] "GET /periodicity/calculate/?start=1495559449&stop=1496164249&probe=1233&measurement=4377618 HTTP/1.0" 200 465
+[30/May/2017 17:12:01] "GET /periodicity/ HTTP/1.0" 200 201236
+Not Found: /periodicity-calculate/
+[30/May/2017 17:12:17] "GET /periodicity-calculate/?start=1495559546&stop=1496164346&probe=6243&measurement=1765882 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:12:35] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+[30/May/2017 17:13:17] "GET /periodicity/calculate/?start=1495559607&stop=1496164407&probe=6164&measurement=3103412 HTTP/1.0" 200 975
+[30/May/2017 17:13:53] "GET /periodicity/calculate/?start=1495559607&stop=1496164407&probe=6243&measurement=1765882 HTTP/1.0" 200 5926
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:14] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:15] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:15] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:15] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:15] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:28] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:28] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:28] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:29] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:30] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:31] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:31] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:32] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:39] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:40] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:14:41] "GET /periodicity-calculate/?start=1495559564&stop=1496164364&probe=6231&measurement=3203677 HTTP/1.0" 404 2223
+Not Found: /periodicity-calculate/
+[30/May/2017 17:15:03] "GET /periodicity-calculate/?start=1495559713&stop=1496164513&probe=19592&measurement=2025970 HTTP/1.0" 404 2224

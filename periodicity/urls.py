@@ -19,6 +19,6 @@ from django.views.generic.base import TemplateView
 import calculatePeriodicity.views
 
 urlpatterns = [
-    url(r'^$', calculatePeriodicity.views.index, name='index'),
-    url(r'^calculate-periodicity/$', PeriodicityAnalyzer.as_view()),
+    url(r'^periodicity/$', calculatePeriodicity.views.index, name='index'),
+    url(r'^periodicity/calculate/$', PeriodicityAnalyzer.as_view()),
 ]
