@@ -17,6 +17,7 @@ from django.conf.urls import url
 from calculatePeriodicity.views import PeriodicityAnalyzer,PeriodicityIndex
 from django.views.generic.base import TemplateView
 import calculatePeriodicity.views
+import visualizePeriodicity.views
 
 urlpatterns = [
     url(r'^periodicity/$', calculatePeriodicity.views.index, name='index'),
