@@ -29,7 +29,9 @@ def errorMessageWeek():
     response_json["message"] = "Input error. Please, provide a valid time interval (no longer than a week)."
     return HttpResponse(json.dumps(response_json), content_type="application/json")
 
-
+#class PeriodicityViewer(View):
+#    def get(self, request):
+#        return render(request, 'viz.html')
 
 class PeriodicityIndex(View):
     def get(self,request):

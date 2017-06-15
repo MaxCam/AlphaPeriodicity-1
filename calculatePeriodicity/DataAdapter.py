@@ -1,3 +1,5 @@
+import datetime
+
 class ResultDataAdapter:
 	'''Transform the data fetched by Costeau into a dictionary
 	that will be used to characterize the periodicity
@@ -56,17 +58,22 @@ class ResultDataAdapter:
 		return tracerouteToId,tracerouteIDSequence
 
 	def getGDBdiagram(self,tracerouteSequence):
+		startTime=self.start
 		counter=0
 		gdbdstring=""
 
 		prev=0
 
-		gdbdstring+=("date\tclose\n")
+		gdbdstring+=("date,a\n")
 
 		for tracerouteID in tracerouteSequence:
-			gdbdstring+=(str(counter)+"\t"+str(prev)+"\n")
-			gdbdstring+=(str(counter)+"\t"+str(tracerouteID)+"\n")
+			gdbdstring+=(str(self.getDate((60*15*counter)+startTime))+","+str(prev)+"\n")
+			gdbdstring+=(str(self.getDate((60*15*counter)+startTime))+","+str(tracerouteID)+"\n")
 			prev=tracerouteID
 			counter+=1
-
+#self.getDate((60*15*counter)+startTime))
 		return gdbdstring
+
+	def getDate(self,unixTimestamp):
+		#return unixTimestamp
+		return datetime.datetime.fromtimestamp(int(unixTimestamp)).strftime('%d/%m/%Y %H:%M:%S')

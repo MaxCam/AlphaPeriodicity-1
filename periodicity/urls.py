@@ -21,4 +21,5 @@ import calculatePeriodicity.views
 urlpatterns = [
     url(r'^periodicity/$', calculatePeriodicity.views.index, name='index'),
     url(r'^periodicity/calculate/$', PeriodicityAnalyzer.as_view()),
+    url(r'^visualizePeriodicity/$', visualizePeriodicity.views.visualize, name='visualize'),
 ]

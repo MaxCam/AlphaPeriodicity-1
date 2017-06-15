@@ -9,6 +9,37 @@ class PeriodicityCharacterizer:
 		self.tracerouteIDsequence=tracerouteIDsequence
 		self.periodicityFound=False
 
+	def mergePeriodicities(self,periodicityToStartAndStop):
+		periodicityToStartAndStopMerged=dict()	
+		counter=0
+		toMerge=False
+
+		for pattern in periodicityToStartAndStop:
+			#print(pattern)
+			patternCleaned=pattern.split("-")[0]
+			if(counter==0):
+				counter+=1
+				patternPrev=patternCleaned
+			else:
+				if(self.cyclic_equiv(patternCleaned,patternPrev)):
+					if toMerge==False:
+						initialPattern=patternPrev
+						startTime=periodicityToStartAndStop[pattern][0]
+						toMerge=True
+				else:
+					if toMerge==True:
+						endTime=periodicityToStartAndStop[pattern][1]
+						toMerge=False
+						periodicityToStartAndStopMerged[initialPattern]=[startTime,endTime]
+					else:
+						periodicityToStartAndStopMerged[patternCleaned]=periodicityToStartAndStop[pattern]
+			patternPrev=pattern
+
+		#print(periodicityToStartAndStopMerged)
+
+		return periodicityToStartAndStopMerged
+#		print(pattern)
+
 	def differentTraceroute(self,gram):
 		tracerouteID=set()
 		for id in gram:
@@ -86,6 +117,7 @@ class PeriodicityCharacterizer:
 
 	def getPeriodicities(self,patterns,tracerouteIDsequence,startTime):
 		#qui c'e qualche bug!
+
 		periodicityToStartAndStop=dict()
 		periodicitaIncorso=False
 		for pattern in patterns:
@@ -119,6 +151,10 @@ class PeriodicityCharacterizer:
 		if(periodicitaIncorso==True):
 			periodicitaIncorso=False
 			periodicityToStartAndStop[str(patternInList)+"-"+str(start)]=[self.getDate(startTime+(start*15*60)),self.getDate(startTime+(lag*15*60))]
+		periodicityToStartAndStop= self.mergePeriodicities(periodicityToStartAndStop)
+		#for periodicity in periodicityToStartAndStop:
+		#	print(periodicityToStartAndStop[periodicity][0])
+
 		return periodicityToStartAndStop
 
 	def removeDuplicate(self,patterns):
