@@ -188,7 +188,7 @@ console.log(window);
 
 */
 
-d3.csv("/static/data2.csv", function(error, data) {
+d3.csv("../static/data2.csv", function(error, data) {
 
 var start = parseInt(window.sessionStorage.getItem("start"));
 var width = parseInt(window.sessionStorage.getItem("width"));
@@ -216,7 +216,7 @@ console.log(motif);
 
 
 
-d3.tsv("/static/perio2.csv", function(error, motif_data) {
+d3.tsv("../static/perio2.csv", function(error, motif_data) {
 
 motif_data.forEach(function(d){
   period = data.filter(function(row,i){
